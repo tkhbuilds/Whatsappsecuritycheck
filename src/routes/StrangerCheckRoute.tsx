@@ -1,0 +1,197 @@
+import React from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+
+import { Button } from '../components/Button';
+import { Field } from '../components/Field';
+import { db } from '../db/db';
+import type { AuditRun, CheckKey, CheckResult, CheckStatus, TargetProfile } from '../db/schema';
+import { nowIso, sha256HexFromFile } from '../lib/crypto';
+import { getCheckDef, STRANGER_CHECK_ORDER } from '../lib/checklists';
+import { id } from '../lib/id';
+
+function isCheckKey(v: string | undefined): v is CheckKey {
+  return (
+    v === 'profilePhoto' ||
+    v === 'about' ||
+    v === 'lastSeenOnline' ||
+    v === 'status' ||
+    v === 'groups' ||
+    v === 'silenceUnknownCallers' ||
+    v === 'twoStepVerification' ||
+    v === 'linkedDevices' ||
+    v === 'backupEncryption'
+  );
+}
+
+export function StrangerCheckRoute() {
+  const nav = useNavigate();
+  const { runId, checkKey: rawKey } = useParams();
+  const [sp] = useSearchParams();
+
+  const [run, setRun] = React.useState<AuditRun | null>(null);
+  const [profile, setProfile] = React.useState<TargetProfile | null>(null);
+  const [existing, setExisting] = React.useState<CheckResult | null>(null);
+
+  const [notes, setNotes] = React.useState('');
+  const [evidenceHash, setEvidenceHash] = React.useState<string | null>(null);
+  const [evidenceMeta, setEvidenceMeta] = React.useState<{ filename?: string; sizeBytes?: number } | null>(null);
+  const [busy, setBusy] = React.useState(false);
+
+  const checkKey = isCheckKey(rawKey) ? rawKey : null;
+  const returnTo = sp.get('return');
+
+  React.useEffect(() => {
+    void (async () => {
+      if (!runId || !checkKey) return;
+      const r = await db.auditRuns.get(runId);
+      if (!r) return;
+      setRun(r);
+      const p = await db.profiles.get(r.profileId);
+      setProfile(p ?? null);
+
+      const prior = await db.checkResults
+        .where('runId')
+        .equals(runId)
+        .and((x) => x.key === checkKey)
+        .first();
+
+      setExisting(prior ?? null);
+      setNotes(prior?.notes ?? '');
+      setEvidenceHash(prior?.evidence?.sha256 ?? null);
+      setEvidenceMeta(prior?.evidence ? { filename: prior.evidence.filename, sizeBytes: prior.evidence.sizeBytes } : null);
+    })();
+  }, [runId, checkKey]);
+
+  if (!runId || !checkKey) {
+    return <div className="card">Invalid check.</div>;
+  }
+
+  if (!run || !profile) {
+    return <div className="card">Loading…</div>;
+  }
+
+  const runIdSafe = runId;
+  const runSafe = run;
+  const profileSafe = profile;
+  const checkKeySafe = checkKey;
+
+  const def = getCheckDef(checkKeySafe);
+  const idx = STRANGER_CHECK_ORDER.indexOf(checkKeySafe);
+  const step = `${idx + 1} / ${STRANGER_CHECK_ORDER.length}`;
+
+  async function onEvidenceFile(file: File | null) {
+    if (!file) {
+      setEvidenceHash(null);
+      setEvidenceMeta(null);
+      return;
+    }
+    const h = await sha256HexFromFile(file);
+    setEvidenceHash(h);
+    setEvidenceMeta({ filename: file.name, sizeBytes: file.size });
+  }
+
+  async function save(status: CheckStatus) {
+    setBusy(true);
+    try {
+      const now = nowIso();
+      const base: CheckResult = {
+        id: existing?.id ?? id(),
+        runId: runIdSafe,
+        profileId: profileSafe.id,
+        key: checkKeySafe,
+        category: def.category,
+        weight: def.weight,
+        status,
+        notes: notes.trim() || undefined,
+        evidence: evidenceHash
+          ? {
+              sha256: evidenceHash,
+              timestamp: now,
+              notes: notes.trim() || undefined,
+              filename: evidenceMeta?.filename,
+              sizeBytes: evidenceMeta?.sizeBytes,
+              ocrStub: { status: 'not_run', hint: 'Future: on-device OCR stub' }
+            }
+          : undefined,
+        createdAt: existing?.createdAt ?? now,
+        updatedAt: now
+      };
+
+      await db.checkResults.put(base);
+
+      if (status === 'fail') {
+        const ret = returnTo ?? `/audit/${runIdSafe}/stranger/${checkKeySafe}`;
+        nav(`/audit/${runIdSafe}/fix?focus=${encodeURIComponent(checkKeySafe)}&return=${encodeURIComponent(ret)}`);
+        return;
+      }
+
+      const nextKey = STRANGER_CHECK_ORDER[idx + 1];
+      if (nextKey) {
+        nav(`/audit/${runIdSafe}/stranger/${nextKey}`);
+        return;
+      }
+
+      // Stranger flow complete
+      if (runSafe.type === 'Quick') {
+        nav(`/report/${runIdSafe}`);
+      } else {
+        nav(`/audit/${runIdSafe}/additional`);
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="card stack">
+      <div className="row" style={{ justifyContent: 'space-between' }}>
+        <div className="pill">Stranger check</div>
+        <div className="pill">{step}</div>
+      </div>
+
+      <h1 className="h1">{def.title}</h1>
+      <div className="muted">{def.description}</div>
+      <div className="small muted">
+        Mode: {run.mode ?? '—'} • Target: {profile.name} ({profile.os}, {profile.variant})
+      </div>
+
+      <div className="hr" />
+
+      <div className="stack">
+        <Button onClick={() => void save('pass')} fullWidth disabled={busy}>
+          Stranger cannot see
+        </Button>
+        <Button onClick={() => void save('fail')} variant="danger" fullWidth disabled={busy}>
+          Stranger can see
+        </Button>
+        <Button onClick={() => void save('unknown')} variant="secondary" fullWidth disabled={busy}>
+          Not sure
+        </Button>
+      </div>
+
+      <div className="hr" />
+
+      <Field label="Notes (optional)" hint="Evidence images are NOT stored. Only a SHA-256 hash + timestamp + notes.">
+        <textarea className="input" value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
+      </Field>
+
+      <Field label="Evidence (optional)" hint="Upload a screenshot to hash it locally (no image is saved).">
+        <input
+          className="input"
+          type="file"
+          accept="image/*"
+          onChange={(e) => void onEvidenceFile(e.target.files?.[0] ?? null)}
+        />
+        {evidenceHash ? (
+          <div className="small muted" style={{ wordBreak: 'break-all' }}>
+            SHA-256: {evidenceHash}
+          </div>
+        ) : (
+          <div className="small muted">No evidence attached.</div>
+        )}
+      </Field>
+
+      {existing ? <div className="small muted">Previously recorded: {existing.status.toUpperCase()}</div> : null}
+    </div>
+  );
+}
