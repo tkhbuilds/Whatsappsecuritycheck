@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createHashRouter, Navigate } from 'react-router-dom';
 
 import { AppShell } from './shell/AppShell';
 import { HomeRoute } from './routes/HomeRoute';
@@ -11,7 +11,7 @@ import { FixStepsRoute } from './routes/FixStepsRoute';
 import { ReportRoute } from './routes/ReportRoute';
 import { ADDITIONAL_CHECK_ORDER } from './lib/checklists';
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: '/',
     element: <AppShell />,

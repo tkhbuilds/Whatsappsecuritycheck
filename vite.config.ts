@@ -2,7 +2,11 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const REPO_NAME = 'Whatsappsecuritycheck';
+const BASE = process.env.GITHUB_PAGES === 'true' ? `/${REPO_NAME}/` : '/';
+
 export default defineConfig({
+  base: BASE,
   plugins: [
     react(),
     VitePWA({
@@ -15,8 +19,8 @@ export default defineConfig({
         theme_color: '#0b1220',
         background_color: '#0b1220',
         display: 'standalone',
-        scope: '/',
-        start_url: '/',
+        scope: BASE,
+        start_url: `${BASE}#/`,
         icons: [
           {
             src: 'icon.svg',
