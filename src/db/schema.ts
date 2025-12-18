@@ -15,6 +15,7 @@ export type CheckKey =
   | 'groups'
   | 'silenceUnknownCallers'
   | 'twoStepVerification'
+  | 'twoStepRecoveryEmail'
   | 'linkedDevices'
   | 'backupEncryption';
 

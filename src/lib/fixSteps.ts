@@ -58,6 +58,16 @@ const steps: Record<CheckKey, FixStep> = {
     pathIOS: ['WhatsApp', 'Settings', 'Account', 'Two-step verification'],
     notes: ['Add an email to recover the PIN if you forget it.']
   },
+  twoStepRecoveryEmail: {
+    title: 'Two-step recovery email',
+    desired: 'Add a recovery email address you control (needed to reset your 2-step PIN).',
+    pathAndroid: ['WhatsApp', '⋮ Menu', 'Settings', 'Account', 'Two-step verification', 'Add email address'],
+    pathIOS: ['WhatsApp', 'Settings', 'Account', 'Two-step verification', 'Add Email Address'],
+    notes: [
+      'Use an email you can access long-term (not a work/school email).',
+      'If you already enabled 2-step without email, add it now.'
+    ]
+  },
   linkedDevices: {
     title: 'Linked devices review',
     desired: 'Remove any device you do not recognize.',

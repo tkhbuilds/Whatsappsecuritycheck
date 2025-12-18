@@ -67,6 +67,14 @@ export const CHECKS: CheckDefinition[] = [
     description: 'Adds a PIN to protect your account.',
     strangerView: false
   },
+  {
+    key: 'twoStepRecoveryEmail',
+    title: 'Recovery email for 2-step',
+    category: 'important',
+    weight: 10,
+    description: 'Set an email address so you can reset the PIN if you forget it.',
+    strangerView: false
+  },
 
   {
     key: 'linkedDevices',
@@ -91,6 +99,7 @@ export const ADDITIONAL_CHECK_ORDER: CheckKey[] = [
   'groups',
   'silenceUnknownCallers',
   'twoStepVerification',
+  'twoStepRecoveryEmail',
   'linkedDevices',
   'backupEncryption'
 ];
