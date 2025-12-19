@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 import { ButtonLink } from '../components/ButtonLink';
+import { UpdateBanner } from '../components/UpdateBanner';
 
 export function AppShell() {
   const loc = useLocation();
@@ -21,6 +22,7 @@ export function AppShell() {
         </div>
       </header>
       <main className="main">
+        <UpdateBanner />
         <Outlet />
       </main>
       <footer className="footer">

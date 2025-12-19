@@ -81,6 +81,16 @@ const steps: Record<CheckKey, FixStep> = {
     pathAndroid: ['WhatsApp', '⋮ Menu', 'Settings', 'Chats', 'Chat backup', 'End-to-end encrypted backup'],
     pathIOS: ['WhatsApp', 'Settings', 'Chats', 'Chat Backup', 'End-to-end Encrypted Backup'],
     notes: ['Keep the encryption password/key safe.']
+  },
+  whatsappDeepLink: {
+    title: 'WhatsApp deep links',
+    desired: 'Make sure WhatsApp is installed and allowed to open links from your browser.',
+    pathAndroid: ['Install/Update WhatsApp', 'Open WhatsApp once', 'Allow “Open supported links” when prompted'],
+    pathIOS: ['Install/Update WhatsApp', 'Open WhatsApp once', 'Safari: allow opening WhatsApp when prompted'],
+    notes: [
+      'Some in-app browsers (Instagram/TikTok) block app links—use Safari/Chrome.',
+      'This check is user-verified; the web app cannot reliably detect success.'
+    ]
   }
 };
 

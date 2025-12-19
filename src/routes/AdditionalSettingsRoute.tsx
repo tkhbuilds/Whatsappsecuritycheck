@@ -8,6 +8,7 @@ import type { AuditRun, CheckKey, CheckResult, CheckStatus, TargetProfile } from
 import { nowIso, sha256HexFromFile } from '../lib/crypto';
 import { ADDITIONAL_CHECK_ORDER, getCheckDef } from '../lib/checklists';
 import { id } from '../lib/id';
+import { DeepLinkBox } from '../components/DeepLinkBox';
 
 function isCheckKey(v: string | undefined): v is CheckKey {
   return (
@@ -19,6 +20,7 @@ function isCheckKey(v: string | undefined): v is CheckKey {
     v === 'silenceUnknownCallers' ||
     v === 'twoStepVerification' ||
     v === 'twoStepRecoveryEmail' ||
+    v === 'whatsappDeepLink' ||
     v === 'linkedDevices' ||
     v === 'backupEncryption'
   );
@@ -149,6 +151,13 @@ export function AdditionalSettingsRoute() {
       <div className="small muted">Target: {profile.name} ({profile.os}, {profile.variant})</div>
 
       <div className="hr" />
+
+      {checkKeySafe === 'whatsappDeepLink' ? (
+        <>
+          <DeepLinkBox />
+          <div className="hr" />
+        </>
+      ) : null}
 
       <div className="stack">
         <Button onClick={() => void save('pass')} fullWidth disabled={busy}>

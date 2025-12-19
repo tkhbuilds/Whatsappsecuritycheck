@@ -91,6 +91,14 @@ export const CHECKS: CheckDefinition[] = [
     weight: 2,
     description: 'Turn on end-to-end encrypted backups if you use backups.',
     strangerView: false
+  },
+  {
+    key: 'whatsappDeepLink',
+    title: 'WhatsApp deep links',
+    category: 'info',
+    weight: 2,
+    description: 'Can this device open WhatsApp from a link (useful for guided fix steps)?',
+    strangerView: false
   }
 ];
 
@@ -101,7 +109,8 @@ export const ADDITIONAL_CHECK_ORDER: CheckKey[] = [
   'twoStepVerification',
   'twoStepRecoveryEmail',
   'linkedDevices',
-  'backupEncryption'
+  'backupEncryption',
+  'whatsappDeepLink'
 ];
 
 export function getCheckDef(key: CheckKey): CheckDefinition {

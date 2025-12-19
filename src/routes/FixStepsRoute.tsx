@@ -17,6 +17,7 @@ function isCheckKey(v: string | null): v is CheckKey {
     v === 'silenceUnknownCallers' ||
     v === 'twoStepVerification' ||
     v === 'twoStepRecoveryEmail' ||
+    v === 'whatsappDeepLink' ||
     v === 'linkedDevices' ||
     v === 'backupEncryption'
   );

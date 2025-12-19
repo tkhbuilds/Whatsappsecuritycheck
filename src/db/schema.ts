@@ -16,6 +16,7 @@ export type CheckKey =
   | 'silenceUnknownCallers'
   | 'twoStepVerification'
   | 'twoStepRecoveryEmail'
+  | 'whatsappDeepLink'
   | 'linkedDevices'
   | 'backupEncryption';
 

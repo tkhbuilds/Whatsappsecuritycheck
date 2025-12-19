@@ -4,11 +4,17 @@ import { RouterProvider } from 'react-router-dom';
 import { registerSW } from 'virtual:pwa-register';
 
 import { router } from './router';
+import { requestSWRefreshBanner, setUpdateSW } from './lib/swEvents';
 import './styles/app.css';
 
-registerSW({
-  immediate: true
+const updateSW = registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    requestSWRefreshBanner();
+  }
 });
+
+setUpdateSW(updateSW);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
