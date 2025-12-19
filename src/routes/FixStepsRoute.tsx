@@ -88,7 +88,7 @@ export function FixStepsRoute() {
 
       <div className="hr" />
 
-      <WhatsAppOpenButtons />
+      <WhatsAppOpenButtons os={profile.os} variant={profile.variant} />
 
       <div className="hr" />
 

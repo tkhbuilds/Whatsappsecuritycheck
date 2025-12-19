@@ -2,9 +2,15 @@ import React from 'react';
 
 import { Button } from './Button';
 import { attemptDeepLink, whatsappDeepLinkAttempts } from '../lib/deeplinks';
+import type { OS, WhatsAppVariant } from '../db/schema';
 
-export function WhatsAppOpenButtons(props: { title?: string; subtitle?: string }) {
-  const attempts = whatsappDeepLinkAttempts();
+export function WhatsAppOpenButtons(props: {
+  title?: string;
+  subtitle?: string;
+  os?: OS;
+  variant?: WhatsAppVariant;
+}) {
+  const attempts = whatsappDeepLinkAttempts({ os: props.os, variant: props.variant });
 
   return (
     <div className="stack">

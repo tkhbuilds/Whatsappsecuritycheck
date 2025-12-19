@@ -159,7 +159,7 @@ export function AdditionalSettingsRoute() {
 
       {checkKeySafe === 'whatsappDeepLink' ? (
         <>
-          <DeepLinkBox />
+          <DeepLinkBox os={profileSafe.os} variant={profileSafe.variant} />
           <div className="hr" />
         </>
       ) : null}
