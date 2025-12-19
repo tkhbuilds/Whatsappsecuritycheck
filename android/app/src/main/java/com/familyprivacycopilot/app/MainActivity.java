@@ -14,6 +14,12 @@ public class MainActivity extends BridgeActivity {
     // Note: Capacitor normally loads via its local server; this enforces an assets URL.
     final WebView webView = this.bridge.getWebView();
     webView.getSettings().setJavaScriptEnabled(true);
+    webView.getSettings().setDomStorageEnabled(true);
+    webView.getSettings().setDatabaseEnabled(true);
+    webView.getSettings().setAllowFileAccess(true);
+    webView.getSettings().setAllowContentAccess(true);
+    webView.getSettings().setAllowFileAccessFromFileURLs(true);
+    webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
     webView.loadUrl("file:///android_asset/public/index.html");
   }
 }
