@@ -4,6 +4,13 @@ node_modules/
 # build output
 dist/
 
+# Android / Capacitor (local + build artifacts)
+android-sdk/
+android/local.properties
+android/.gradle/
+android/**/build/
+android/**/.cxx/
+
 # local
 .DS_Store
 *.log

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Family Privacy Copilot</string>
+    <string name="title_activity_main">Family Privacy Copilot</string>
+    <string name="package_name">com.familyprivacycopilot.app</string>
+    <string name="custom_url_scheme">com.familyprivacycopilot.app</string>
+</resources>
