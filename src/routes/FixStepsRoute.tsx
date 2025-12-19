@@ -6,6 +6,7 @@ import { db } from '../db/db';
 import type { AuditRun, CheckKey, TargetProfile } from '../db/schema';
 import { getCheckDef } from '../lib/checklists';
 import { getFixStep, pathForOS } from '../lib/fixSteps';
+import { WhatsAppOpenButtons } from '../components/WhatsAppOpenButtons';
 
 function isCheckKey(v: string | null): v is CheckKey {
   return (
@@ -84,6 +85,10 @@ export function FixStepsRoute() {
           </div>
         ) : null}
       </div>
+
+      <div className="hr" />
+
+      <WhatsAppOpenButtons />
 
       <div className="hr" />
 

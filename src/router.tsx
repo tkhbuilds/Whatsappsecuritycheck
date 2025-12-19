@@ -9,7 +9,6 @@ import { StrangerCheckRoute } from './routes/StrangerCheckRoute';
 import { AdditionalSettingsRoute } from './routes/AdditionalSettingsRoute';
 import { FixStepsRoute } from './routes/FixStepsRoute';
 import { ReportRoute } from './routes/ReportRoute';
-import { ADDITIONAL_CHECK_ORDER } from './lib/checklists';
 
 export const router = createHashRouter([
   {
@@ -20,10 +19,7 @@ export const router = createHashRouter([
       { path: 'profiles/new', element: <NewProfileRoute /> },
       { path: 'audit/:runId/mode', element: <AuditModeRoute /> },
       { path: 'audit/:runId/stranger/:checkKey', element: <StrangerCheckRoute /> },
-      {
-        path: 'audit/:runId/additional',
-        element: <Navigate to={`additional/${ADDITIONAL_CHECK_ORDER[0]}`} replace />
-      },
+      { path: 'audit/:runId/additional', element: <AdditionalSettingsRoute /> },
       { path: 'audit/:runId/additional/:checkKey', element: <AdditionalSettingsRoute /> },
       { path: 'audit/:runId/fix', element: <FixStepsRoute /> },
       { path: 'report/:runId', element: <ReportRoute /> },

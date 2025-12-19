@@ -40,7 +40,7 @@ export function AdditionalSettingsRoute() {
   const [evidenceMeta, setEvidenceMeta] = React.useState<{ filename?: string; sizeBytes?: number } | null>(null);
   const [busy, setBusy] = React.useState(false);
 
-  const checkKey = isCheckKey(rawKey) ? rawKey : null;
+  const checkKey = isCheckKey(rawKey) ? rawKey : ADDITIONAL_CHECK_ORDER[0];
   const returnTo = sp.get('return');
 
   React.useEffect(() => {
@@ -65,9 +65,14 @@ export function AdditionalSettingsRoute() {
     })();
   }, [runId, checkKey]);
 
-  if (!runId || !checkKey) {
-    return <div className="card">Invalid check.</div>;
-  }
+  // If user hits /audit/:runId/additional without a checkKey, normalize URL.
+  React.useEffect(() => {
+    if (!runId) return;
+    if (rawKey) return;
+    nav(`/audit/${runId}/additional/${checkKey}`, { replace: true });
+  }, [runId, rawKey, checkKey, nav]);
+
+  if (!runId) return <div className="card">Run not found.</div>;
 
   if (!run || !profile) {
     return <div className="card">Loading…</div>;
